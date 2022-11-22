@@ -18,8 +18,8 @@ class AlbumRepository
     # SELECT id, title, release_year, artist_id FROM albums WHERE id = $1;
 
     # Returns a single Album object.
-    sql_code = "SELECT id, title, release_year, artist_id FROM albums WHERE id = #{id};"
-    result = DatabaseConnection.exec_params(sql_code,[])
+    sql_code = "SELECT id, title, release_year, artist_id FROM albums WHERE id = $1;"
+    result = DatabaseConnection.exec_params(sql_code,[id])
     return make_album(result).first
   end
   
