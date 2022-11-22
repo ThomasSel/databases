@@ -4,8 +4,8 @@ require_relative "lib/database_connection"
 DatabaseConnection.connect('music_library')
 
 # Perform an SQL query on the database and get the result set.
-sql = 'SELECT id, title FROM albums ORDER BY id;'
-result = DatabaseConnection.exec_params(sql, [])
+repo = AlbumRepository.new
+repo.all
 
 # Print out each record from the result set.
 result.each do |record|
