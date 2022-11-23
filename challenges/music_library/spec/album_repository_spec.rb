@@ -45,4 +45,33 @@ describe AlbumRepository do
     expect(album.release_year).to eq  "1980"
     expect(album.artist_id).to eq "2"
   end
+
+  it "Add new album in the database from a given Album instance" do
+    album = Album.new 
+    album.title = "Voulez-Vous"
+    album.release_year = 1979
+    album.artist_id = 2
+    
+    repo = AlbumRepository.new
+    repo.create(album)
+
+    result_album = repo.find(5)
+    expect(result_album.id).to eq "5"
+    expect(result_album.title).to eq "Voulez-Vous"
+    expect(result_album.release_year).to eq "1979"
+    expect(result_album.artist_id).to eq "2"
+  end
+
+  it "Delete removes album from database" do
+    repo = AlbumRepository.new
+
+    repo.delete(2)
+    albums = repo.all
+
+    expect(albums.length).to eq 3
+
+    expect(albums[0].id).to eq "1"
+    expect(albums[1].id).to eq "3"
+    expect(albums[2].id).to eq "4"
+  end
 end

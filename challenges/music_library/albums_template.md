@@ -35,21 +35,26 @@ If seed data is provided (or you already created it), you can skip this step.
 -- so we can start with a fresh state.
 -- (RESTART IDENTITY resets the primary key)
 
-TRUNCATE TABLE albums RESTART IDENTITY; -- replace with your own table name.
+TRUNCATE TABLE artists RESTART IDENTITY;
+TRUNCATE TABLE albums RESTART IDENTITY;
 
--- Below this line there should only be `INSERT` statements.
--- Replace these statements with your own seed data.
+-- First insert into artists
+INSERT INTO artists (name, genre) VALUES
+('Pixies', 'Rock'),
+('ABBA', 'Pop');
 
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Doolittle', 1989, 1);
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Surfer Rosa ', 1988, 1);
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Super Trouper ', 1980, 2);
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Bossanova  ', 1990, 1);
+-- Then insert into albums
+INSERT INTO albums (title, release_year, artist_id) VALUES
+('Doolittle', 1989, 1),
+('Surfer Rosa', 1988, 1),
+('Super Trouper', 1980, 2),
+('Bossanova', 1990, 1);
 ```
 
 Run this SQL file on the database to truncate (empty) the table, and insert the seed data. Be mindful of the fact any existing records in the table will be deleted.
 
 ```bash
-psql -h 127.0.0.1 your_database_name < seeds_{table_name}.sql
+psql -h 127.0.0.1 music_library_test < spec/seeds_albums.sql
 ```
 
 ## 3. Define the class names
@@ -114,7 +119,7 @@ class AlbumRepository
   end
 
   # Gets a single record by its ID
-  # One argument: the id (number)
+  # One argument: the id (integer)
   def find(id)
     # Executes the SQL query:
     # SELECT id, title, release_year, artist_id FROM albums WHERE id = $1;
@@ -122,16 +127,21 @@ class AlbumRepository
     # Returns a single Album object.
   end
 
-  # Add more methods below for each operation you'd like to implement.
+  # One argument: the album to add to the database (instance of Album class)
+  def create(album)
+    # Executes the SQL query:
+    # INSERT INTO albums (title, release_year, artist_id) VALUES ($1, $2, $3);
 
-  # def create(student)
-  # end
+    # Returns nothing.
+  end
 
-  # def update(student)
-  # end
+  # One argument: the id of the album to delete (integer)
+  def delete(id)
+    # Executes the SQL query:
+    # DELETE FROM albums WHERE id = $1;
 
-  # def delete(student)
-  # end
+    # Returns nothing
+  end
 end
 ```
 
@@ -146,7 +156,6 @@ These examples will later be encoded as RSpec tests.
 
 # 1
 # Get all albums
-
 repo = AlbumRepository.new
 
 albums = repo.all
@@ -164,8 +173,7 @@ albums[1].release_year # =>  1988
 albums[1].artist_id # => 1
 
 # 2
-# Find third albums
-
+# Find third album
 repo = AlbumRepository.new
 
 album = repo.find(3)
@@ -174,6 +182,35 @@ album.id # =>  3
 album.title # =>  'Super Trouper'
 album.release_year # =>  1980
 album.artist_id # => 2
+
+# 3
+# Add new album in the database from a given Album instance
+album = Album.new 
+album.title = "Voulez-Vous"
+album.release_year = 1979
+album.artist_id = 2
+
+repo = AlbumRepository.new
+repo.create(album)
+
+result_album = repo.find(5)
+result_album.id # => "5"
+result_album.title == album.title # => true
+result_album.release_year == album.release_year # => true
+result_album.artist_id == album.artist_id # => true
+
+# 4
+# Delete removes album from database
+repo = AlbumRepository.new
+
+repo.delete(2)
+albums = repo.all
+
+albums.length # => 3
+
+albums[0].id # => 1
+albums[1].id # => 3
+albums[2].id # => 4
 ```
 
 Encode this example as a test.
