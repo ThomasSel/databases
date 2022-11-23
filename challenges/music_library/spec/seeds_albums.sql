@@ -1,11 +1,18 @@
-TRUNCATE TABLE albums RESTART IDENTITY; -- replace with your own table name.
+-- First, you'd need to truncate the table - this is so our table is emptied between each test run,
+-- so we can start with a fresh state.
+-- (RESTART IDENTITY resets the primary key)
 
--- Below this line there should only be `INSERT` statements.
--- Replace these statements with your own seed data.
+TRUNCATE TABLE artists RESTART IDENTITY;
+TRUNCATE TABLE albums RESTART IDENTITY;
 
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Doolittle', 1989, 1);
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Surfer Rosa', 1988, 1);
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Super Trouper', 1980, 2);
-INSERT INTO albums (title, release_year, artist_id) VALUES ('Bossanova', 1990, 1);
+-- First insert into artists
+INSERT INTO artists (name, genre) VALUES
+('Pixies', 'Rock'),
+('ABBA', 'Pop');
 
-
+-- Then insert into albums
+INSERT INTO albums (title, release_year, artist_id) VALUES
+('Doolittle', 1989, 1),
+('Surfer Rosa', 1988, 1),
+('Super Trouper', 1980, 2),
+('Bossanova', 1990, 1);
