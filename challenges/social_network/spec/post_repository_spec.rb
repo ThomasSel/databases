@@ -1,6 +1,7 @@
 require "database_connection"
 require "post_repository"
 require 'pg'
+require "account_repository"
 
 def reset_posts_table
   seed_sql = File.read('spec/seeds_posts.sql')
@@ -113,5 +114,18 @@ describe PostRepository do
     post = repo.find(2)
     post.account_id = 5
     expect{repo.update(post)}.to raise_error PG::ForeignKeyViolation
+  end
+
+  it "Deleting account deletes all posts linked to it" do
+    account_repo = AccountRepository.new
+    post_repo = PostRepository.new
+    account_repo.delete(1)
+    all_posts = post_repo.all
+    expect(all_posts.length).to eq 2
+    expect(all_posts.first.id).to eq 2
+    expect(all_posts.first.title).to eq "Title 2"
+    expect(all_posts.first.contents).to eq "Contents 2"
+    expect(all_posts.first.views).to eq 100
+    expect(all_posts.first.account_id).to eq 2
   end
 end

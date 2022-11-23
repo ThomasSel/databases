@@ -251,6 +251,19 @@ repo = PostRepository.new
 post = repo.find(2)
 post.account_id = 5
 repo.update(post) # => raises error
+
+# 10
+# Deleting account deletes all posts linked to it
+account_repo = AccountReporsitory.new
+post_repo = PostReporsitory.new
+account_repo.delete(1)
+all_posts = post_repo.all
+all_posts.length # => 2
+all_posts.first.id # => 2
+all_posts.first.title # => "Title 2"
+all_posts.first.contents # => "Contents 2"
+all_posts.first.views # => 100
+all_posts.first.account_id # => 2
 ```
 
 Encode this example as a test.
