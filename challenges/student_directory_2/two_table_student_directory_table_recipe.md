@@ -82,16 +82,13 @@ You'll then be able to say that:
 Replace the relevant bits in this example with your own:
 
 ```
-# EXAMPLE
+1. Can one student have many cohorts? NO
+2. Can one cohort have many students? YES
 
-1. Can one artist have many albums? YES
-2. Can one album have many artists? NO
+A cohort HAS MANY students
+A student BELONGS TO a cohort
 
--> Therefore,
--> An artist HAS MANY albums
--> An album BELONGS TO an artist
-
--> Therefore, the foreign key is on the albums table.
+-> Therefore, the foreign key is on the students table.
 ```
 
 *If you can answer YES to the two questions, you'll probably have to implement a Many-to-Many relationship, which is more complex and needs a third table (called a join table).*
