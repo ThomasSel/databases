@@ -1,4 +1,4 @@
-# {{TABLE NAME}} Model and Repository Classes Design Recipe
+# Recipe Model and Repository Classes Design Recipe
 
 _Copy this recipe template to design and implement Model and Repository classes for a database table._
 
@@ -49,7 +49,7 @@ INSERT INTO recipes (name, avg_cooking_time, rating) VALUES
 Run this SQL file on the database to truncate (empty) the table, and insert the seed data. Be mindful of the fact any existing records in the table will be deleted.
 
 ```bash
-psql -h 127.0.0.1 your_database_name < seeds_{table_name}.sql
+psql -h 127.0.0.1 recipes_directory < seeds_recipes.sql
 ```
 
 ## 3. Define the class names
@@ -57,17 +57,14 @@ psql -h 127.0.0.1 your_database_name < seeds_{table_name}.sql
 Usually, the Model class name will be the capitalised table name (single instead of plural). The same name is then suffixed by `Repository` for the Repository class name.
 
 ```ruby
-# EXAMPLE
-# Table name: students
-
 # Model class
-# (in lib/student.rb)
-class Student
+# (in lib/recipe.rb)
+class Recipe
 end
 
 # Repository class
-# (in lib/student_repository.rb)
-class StudentRepository
+# (in lib/recipe_repository.rb)
+class RecipeRepository
 end
 ```
 
@@ -76,25 +73,12 @@ end
 Define the attributes of your Model class. You can usually map the table columns to the attributes of the class, including primary and foreign keys.
 
 ```ruby
-# EXAMPLE
-# Table name: students
-
 # Model class
-# (in lib/student.rb)
+# (in lib/recipe.rb)
 
-class Student
-
-  # Replace the attributes by your own columns.
-  attr_accessor :id, :name, :cohort_name
+class Recipe
+  attr_accessor :id, :avg_cooking_time, :rating
 end
-
-# The keyword attr_accessor is a special Ruby feature
-# which allows us to set and get attributes on an object,
-# here's an example:
-#
-# student = Student.new
-# student.name = 'Jo'
-# student.name
 ```
 
 *You may choose to test-drive this class, but unless it contains any more logic than the example above, it is probably not needed.*
@@ -106,19 +90,16 @@ Your Repository class will need to implement methods for each "read" or "write" 
 Using comments, define the method signatures (arguments and return value) and what they do - write up the SQL queries that will be used by each method.
 
 ```ruby
-# EXAMPLE
-# Table name: students
-
 # Repository class
-# (in lib/student_repository.rb)
+# (in lib/recipe_repository.rb)
 
-class StudentRepository
+class RecipeRepository
 
   # Selecting all records
   # No arguments
   def all
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM students;
+    # SELECT id, name, avg_cooking_time, rating FROM recipes;
 
     # Returns an array of Student objects.
   end
@@ -127,21 +108,10 @@ class StudentRepository
   # One argument: the id (number)
   def find(id)
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM students WHERE id = $1;
+    # SELECT id, name, avg_cooking_time, rating FROM recipes WHERE id = $1;
 
     # Returns a single Student object.
   end
-
-  # Add more methods below for each operation you'd like to implement.
-
-  # def create(student)
-  # end
-
-  # def update(student)
-  # end
-
-  # def delete(student)
-  # end
 end
 ```
 
@@ -152,37 +122,28 @@ Write Ruby code that defines the expected behaviour of the Repository class, fol
 These examples will later be encoded as RSpec tests.
 
 ```ruby
-# EXAMPLES
-
 # 1
-# Get all students
+# Get all recipes
+repo = RecipeRepository.new
+recipes = repo.all
 
-repo = StudentRepository.new
+recipes.length # => 3
 
-students = repo.all
+recipes.first.id # => "1"
+recipes.first.name # => "Pasta"
+recipes.first.avg_cooking_time # => "15"
+recipes.first.rating # => "4"
 
-students.length # =>  2
-
-students[0].id # =>  1
-students[0].name # =>  'David'
-students[0].cohort_name # =>  'April 2022'
-
-students[1].id # =>  2
-students[1].name # =>  'Anna'
-students[1].cohort_name # =>  'May 2022'
 
 # 2
-# Get a single student
+# Get the recipe with id 2
+repo = RecipeRepository.new
+recipe = repo.find(2)
 
-repo = StudentRepository.new
-
-student = repo.find(1)
-
-student.id # =>  1
-student.name # =>  'David'
-student.cohort_name # =>  'April 2022'
-
-# Add more examples for each method
+recipe.id # => "2"
+recipe.name # => "Risotto"
+recipe.avg_cooking_time # => "45"
+recipe.rating # => "5"
 ```
 
 Encode this example as a test.
@@ -194,35 +155,19 @@ Running the SQL code present in the seed file will empty the table and re-insert
 This is so you get a fresh table contents every time you run the test suite.
 
 ```ruby
-# EXAMPLE
+# file: spec/recipe_repository_spec.rb
 
-# file: spec/student_repository_spec.rb
-
-def reset_students_table
-  seed_sql = File.read('spec/seeds_students.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'students' })
+def reset_recipes_table
+  seed_sql = File.read('spec/seeds_recipes.sql')
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'recipes_directory_test' })
   connection.exec(seed_sql)
 end
 
-describe StudentRepository do
+describe RecipeRepository do
   before(:each) do 
-    reset_students_table
+    reset_recipes_table
   end
 
   # (your tests will go here).
 end
 ```
-
-## 8. Test-drive and implement the Repository class behaviour
-
-_After each test you write, follow the test-driving process of red, green, refactor to implement the behaviour._
-
-<!-- BEGIN GENERATED SECTION DO NOT EDIT -->
-
----
-
-**How was this resource?**  
-[😫](https://airtable.com/shrUJ3t7KLMqVRFKR?prefill_Repository=makersacademy%2Fdatabases&prefill_File=resources%2Frepository_class_recipe_template.md&prefill_Sentiment=😫) [😕](https://airtable.com/shrUJ3t7KLMqVRFKR?prefill_Repository=makersacademy%2Fdatabases&prefill_File=resources%2Frepository_class_recipe_template.md&prefill_Sentiment=😕) [😐](https://airtable.com/shrUJ3t7KLMqVRFKR?prefill_Repository=makersacademy%2Fdatabases&prefill_File=resources%2Frepository_class_recipe_template.md&prefill_Sentiment=😐) [🙂](https://airtable.com/shrUJ3t7KLMqVRFKR?prefill_Repository=makersacademy%2Fdatabases&prefill_File=resources%2Frepository_class_recipe_template.md&prefill_Sentiment=🙂) [😀](https://airtable.com/shrUJ3t7KLMqVRFKR?prefill_Repository=makersacademy%2Fdatabases&prefill_File=resources%2Frepository_class_recipe_template.md&prefill_Sentiment=😀)  
-Click an emoji to tell us.
-
-<!-- END GENERATED SECTION DO NOT EDIT -->

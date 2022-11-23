@@ -10,9 +10,9 @@ class DatabaseConnection
   # the database name given in argument.
   def self.connect(database_name)
     if ENV["PG_password"]
-    @connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test', password: ENV["PG_password"] })
+    @connection = PG.connect({ host: '127.0.0.1', dbname: database_name, password: ENV["PG_password"] })
     else
-      @connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test'})
+      @connection = PG.connect({ host: '127.0.0.1', dbname: database_name})
     end
   end
 
