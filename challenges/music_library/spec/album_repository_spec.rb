@@ -23,15 +23,15 @@ describe AlbumRepository do
 
     expect(albums.length).to eq 4
 
-    expect(albums[0].id).to eq  "1"
+    expect(albums[0].id).to eq  1
     expect(albums[0].title).to eq 'Doolittle'
-    expect(albums[0].release_year).to eq "1989"
-    expect(albums[0].artist_id).to eq "1"
+    expect(albums[0].release_year).to eq 1989
+    expect(albums[0].artist_id).to eq 1
 
-    expect(albums[1].id).to eq "2"
+    expect(albums[1].id).to eq 2
     expect(albums[1].title).to eq 'Surfer Rosa'
-    expect(albums[1].release_year).to eq "1988"
-    expect(albums[1].artist_id).to eq "1"
+    expect(albums[1].release_year).to eq 1988
+    expect(albums[1].artist_id).to eq 1
   end
   # 2
   it " Find third albums" do
@@ -40,10 +40,10 @@ describe AlbumRepository do
 
     album = repo.find(3)
 
-    expect(album.id).to eq  "3"
+    expect(album.id).to eq  3
     expect(album.title).to eq 'Super Trouper'
-    expect(album.release_year).to eq  "1980"
-    expect(album.artist_id).to eq "2"
+    expect(album.release_year).to eq  1980
+    expect(album.artist_id).to eq 2
   end
 
   it "Add new album in the database from a given Album instance" do
@@ -56,10 +56,10 @@ describe AlbumRepository do
     repo.create(album)
 
     result_album = repo.find(5)
-    expect(result_album.id).to eq "5"
+    expect(result_album.id).to eq 5
     expect(result_album.title).to eq "Voulez-Vous"
-    expect(result_album.release_year).to eq "1979"
-    expect(result_album.artist_id).to eq "2"
+    expect(result_album.release_year).to eq 1979
+    expect(result_album.artist_id).to eq 2
   end
 
   it "Delete removes album from database" do
@@ -70,8 +70,8 @@ describe AlbumRepository do
 
     expect(albums.length).to eq 3
 
-    expect(albums[0].id).to eq "1"
-    expect(albums[1].id).to eq "3"
-    expect(albums[2].id).to eq "4"
+    expect(albums[0].id).to eq 1
+    expect(albums[1].id).to eq 3
+    expect(albums[2].id).to eq 4
   end
 end
