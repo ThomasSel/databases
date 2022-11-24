@@ -1,6 +1,17 @@
 require_relative "../app"
+require "database_connection"
+
+def reset_tables
+  seed_sql = File.read('spec/seeds_artists.sql')
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_test'})
+  connection.exec(seed_sql)
+end
 
 RSpec.describe Application do
+  before(:each) do
+    reset_tables
+  end
+
   it "runs the command line music library manager and asks for the albums" do
     io_double = double(:fake_io)
     expect(io_double).to receive(:puts).with("\nWelcome to the music library manager!\n").ordered
@@ -69,7 +80,7 @@ RSpec.describe Application do
     2.times do
       expect_options(io_double)
       expect(io_double).to receive(:gets).and_return("Not correct\n").ordered
-  end
+    end
     expect_options(io_double)
     expect(io_double).to receive(:gets).and_return("1\n").ordered
     expect(io_double).not_to receive(:gets)

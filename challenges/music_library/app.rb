@@ -20,8 +20,7 @@ class Application
 
   def run
     @io.puts "\nWelcome to the music library manager!\n"
-    print_options
-    input = @io.gets.chomp
+    input = nil
     until ["1", "2"].include?(input)
       print_options
       input = @io.gets.chomp
