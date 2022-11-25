@@ -1,8 +1,7 @@
 -- Create the first table.
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
-  title text,
-  content text
+  title text
 );
 
 -- Create the second table.
