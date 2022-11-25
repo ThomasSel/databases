@@ -24,8 +24,8 @@ RSpec.describe TagRepository do
     expect(tags.last.name).to eq "cooking"
   end
 
-  xit "Try to look for a post that isn't in the database" do
+  it "Try to look for a post that isn't in the database" do
     tag_repo = TagRepository.new
-    expect(ag_repo.find_with_post(8)).to eq []
+    expect(tag_repo.find_with_post(8)).to eq []
   end
 end
