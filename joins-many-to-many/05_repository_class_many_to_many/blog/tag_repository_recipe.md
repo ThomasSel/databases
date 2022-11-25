@@ -13,10 +13,10 @@ Otherwise, [follow this recipe to design and create the SQL schema for your tabl
 ```
 # EXAMPLE
 
-Table: posts
+Table: tags
 
 Columns:
-id | title
+id | name
 ```
 
 ## 2. Create Test SQL seeds
@@ -26,7 +26,7 @@ Your tests will depend on data stored in PostgreSQL to run.
 If seed data is provided (or you already created it), you can skip this step.
 
 ```sql
--- (file: spec/seeds_posts.sql)
+-- (file: spec/seeds_tags.sql)
 
 TRUNCATE TABLE posts RESTART IDENTITY CASCADE;
 TRUNCATE TABLE tags RESTART IDENTITY CASCADE;
@@ -69,7 +69,7 @@ ALTER TABLE "public"."posts_tags" ADD FOREIGN KEY ("post_id") REFERENCES "public
 Run this SQL file on the database to truncate (empty) the table, and insert the seed data. Be mindful of the fact any existing records in the table will be deleted.
 
 ```bash
-psql -h 127.0.0.1 your_database_name < seeds_posts.sql
+psql -h 127.0.0.1 blog_test < seeds_tags.sql
 ```
 
 ## 3. Define the class names
@@ -77,16 +77,16 @@ psql -h 127.0.0.1 your_database_name < seeds_posts.sql
 Usually, the Model class name will be the capitalised table name (single instead of plural). The same name is then suffixed by `Repository` for the Repository class name.
 
 ```ruby
-# Table name: posts
+# Table name: tags
 
 # Model class
-# (in lib/post.rb)
-class Post
+# (in lib/tag.rb)
+class Tags
 end
 
 # Repository class
 # (in lib/post_repository.rb)
-class PostRepository
+class TagsRepository
 end
 ```
 
@@ -95,13 +95,13 @@ end
 Define the attributes of your Model class. You can usually map the table columns to the attributes of the class, including primary and foreign keys.
 
 ```ruby
-# Table name: posts
+# Table name: tags
 
 # Model class
-# (in lib/post.rb)
+# (in lib/tag.rb)
 
-class Post
-  attr_accessor :id, :title
+class Tag
+  attr_accessor :id, :name
 end
 ```
 
@@ -114,27 +114,27 @@ Your Repository class will need to implement methods for each "read" or "write" 
 Using comments, define the method signatures (arguments and return value) and what they do - write up the SQL queries that will be used by each method.
 
 ```ruby
-# Table name: posts
+# Table name: tags
 
 # Repository class
-# (in lib/post_repository.rb)
+# (in lib/tag_repository.rb)
 
-class PostRepository
-  # Gets all the posts with the given tag
-  # One argument: tag to search for (string)
-  def find_by_tag(tag)
+class TagRepository
+  # Gets all the tags for a  given post
+  # One argument: id of the post (integer)
+  def find_by_post(id)
     # Executes the SQL query:
     # SELECT
-    #   posts.id,
-    #   posts.title
-    # FROM posts
+    #   tags.id,
+    #   tags.name
+    # FROM tags
     # JOIN posts_tags
-    #   ON posts.id = posts_tags.post_id
-    # JOIN tags
-    #   ON posts_tags.tag_id = tags.id
-    # WHERE tags.name = $1;
+    #   ON tags.id = posts_tags.tags_id
+    # JOIN posts
+    #   ON posts_tags.post_id = posts.id
+    # WHERE posts.id = $1;
 
-    # Returns an array of Post objects.
+    # Returns an array of Tag objects.
   end
 end
 ```
@@ -147,23 +147,22 @@ These examples will later be encoded as RSpec tests.
 
 ```ruby
 # 1
-# Get all posts with the tag 'coding'
-post_repo = PostRepository.new
-posts = post_repo.find_with_tag("coding")
+# Get all tags for the 6th post
+tag_repo = TagRepository.new
+tags = tag_repo.find_with_post(6)
 
-posts.length # => 4
+tags.length # => 2
 
-posts.first.id # => 1
-posts.first.title # => "How to use Git"
+tags.first.id # => 2
+tags.first.name # => "travel"
 
-posts.last.id # => 7
-posts.last.title # => "SQL basics"
+tags.last.id # => 3
+tags.last.name # => "cooking"
 
 # 2
-# Try to look for a tag that isn't in the database
-
-post_repo = PostRepository.new
-post_repo.find_with_tag("music") # => []
+# Try to look for a post that isn't in the database
+tag_repo = TagRepository.new
+tag_repo.find_with_post(8) # => []
 ```
 
 Encode this example as a test.
@@ -177,15 +176,15 @@ This is so you get a fresh table contents every time you run the test suite.
 ```ruby
 # file: spec/post_repository_spec.rb
 
-def reset_posts_table
-  seed_sql = File.read('spec/seeds_posts.sql')
+def reset_tags_table
+  seed_sql = File.read('spec/seeds_tags.sql')
   connection = PG.connect({ host: '127.0.0.1', dbname: 'blog_test' })
   connection.exec(seed_sql)
 end
 
-describe PostRepository do
+describe TagRepository do
   before(:each) do 
-    reset_posts_table
+    reset_tags_table
   end
 end
 ```
