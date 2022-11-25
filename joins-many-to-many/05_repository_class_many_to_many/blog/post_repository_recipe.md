@@ -125,7 +125,7 @@ class PostRepository
   def find_by_tag(tag)
     # Executes the SQL query:
     # SELECT
-    #   posts.id
+    #   posts.id,
     #   posts.title
     # FROM posts
     # JOIN posts_tags
@@ -156,11 +156,11 @@ posts = post_repo.find_with_tag("coding")
 
 posts.length # => 4
 
-posts.first.id = 1
-posts.first.title = "How to use Git"
+posts.first.id # => 1
+posts.first.title # => "How to use Git"
 
-posts.last.id = 7
-posts.last.title = "SQL basics"
+posts.last.id # => 7
+posts.last.title # => "SQL basics"
 
 # 2
 # Try to look for a tag that isn't in the database
